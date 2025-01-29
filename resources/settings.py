@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from pathlib import Path
+from urllib.parse import urlparse
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -75,10 +76,10 @@ WSGI_APPLICATION = 'resources.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
+# DATABASE_URL = 'postgresql://abhinav:feCs6WTlxn9frxttoi9ObS4UPbtO16GM@dpg-cud2uc8gph6c738kl2lg-a/resources_wyow'
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'resources_wyow', 
         'USER': 'abhinav',
         'PASSWORD': 'feCs6WTlxn9frxttoi9ObS4UPbtO16GM',
