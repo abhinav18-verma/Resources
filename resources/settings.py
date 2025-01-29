@@ -77,14 +77,18 @@ WSGI_APPLICATION = 'resources.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # DATABASE_URL = 'postgresql://abhinav:feCs6WTlxn9frxttoi9ObS4UPbtO16GM@dpg-cud2uc8gph6c738kl2lg-a/resources_wyow'
+DATABASE_URL = 'postgresql://abhinav:feCs6WTlxn9frxttoi9ObS4UPbtO16GM@dpg-cud2uc8gph6c738kl2lg-a/resources_wyow'
+
+url = urlparse(DATABASE_URL)
+
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
-        'NAME': 'resources_wyow', 
-        'USER': 'abhinav',
-        'PASSWORD': 'feCs6WTlxn9frxttoi9ObS4UPbtO16GM',
-        'HOST': 'dpg-cud2uc8gph6c738kl2lg-a', 
-        'PORT': '5432',
+        'NAME': url.path[1:],  # Remove leading '/'
+        'USER': url.username,
+        'PASSWORD': url.password,
+        'HOST': url.hostname,
+        'PORT': url.port,
     }
 }
 
