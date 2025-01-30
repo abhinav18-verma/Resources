@@ -3,12 +3,33 @@ from rest_framework.response import Response
 from .models import Resource
 from .serializers import ResourceSerializer
 from openpyxl import load_workbook
+from rest_framework.pagination import LimitOffsetPagination
 
 class ResourceListView(APIView):
     def get(self, request):
         resources = Resource.objects.all()
-        serializer = ResourceSerializer(resources, many=True)
-        return Response(serializer.data)
+    
+        if resources:
+            paginator = LimitOffsetPagination()
+            paginated_list = paginator.paginate_queryset(
+                resources, request)
+            data = ResourceSerializer(
+                paginated_list, many=True).data
+        else:
+            paginator, data = None, []
+    
+        return Response(
+            {
+                "count": paginator.count,
+                "next": paginator.get_next_link(),
+                "previous": paginator.get_previous_link(),
+                "result": data,
+                "message": "Startup resources fetched successfully."
+            },
+            status=200
+        )
+
+
 
 def CreateStartupResources(request):
 
