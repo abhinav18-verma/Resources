@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-w*!t+$hkf7xapsq6(h@m8not@j!_o22wyz6r3(2g!15_%#u1ls
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['resources-wab5.onrender.com']
+ALLOWED_HOSTS = ['resources-wab5.onrender.com', '127.0.0.1']
 
 
 # Application definition
@@ -77,6 +77,9 @@ WSGI_APPLICATION = 'resources.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 # DATABASE_URL = 'postgresql://abhinav:feCs6WTlxn9frxttoi9ObS4UPbtO16GM@dpg-cud2uc8gph6c738kl2lg-a/resources_wyow'
+"""
+Render
+
 DATABASE_URL = 'postgresql://abhinav:feCs6WTlxn9frxttoi9ObS4UPbtO16GM@dpg-cud2uc8gph6c738kl2lg-a/resources_wyow'
 
 url = urlparse(DATABASE_URL)
@@ -91,7 +94,7 @@ DATABASES = {
         'PORT': url.port,
     }
 }
-
+"""
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -133,3 +136,6 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+SUPABASE_URL = "https://ncwxqsiuigjkxmxlgoix.supabase.co"
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im5jd3hxc2l1aWdqa3hteGxnb2l4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MzgyMjExMzgsImV4cCI6MjA1Mzc5NzEzOH0.1mXBpvrNtxAlnkSt2Ip8yKklTM-WzeG25bvxr0pPmgc"

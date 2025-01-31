@@ -4,6 +4,10 @@ from .models import Resource
 from .serializers import ResourceSerializer
 from openpyxl import load_workbook
 from rest_framework.pagination import LimitOffsetPagination
+from supabase import create_client
+from django.conf import settings
+from django.http import JsonResponse
+from django.core.paginator import Paginator
 
 class ResourceListView(APIView):
     def get(self, request):
@@ -71,3 +75,44 @@ def CreateStartupResources(request):
         articles = []
         videos = []
         j -= 1
+
+def get_supabase_client():
+    url = settings.SUPABASE_URL
+    key = settings.SUPABASE_KEY
+    return create_client(url, key)
+
+def add_data(request):
+    supabase = get_supabase_client()
+    data = {
+        "name": "Sample Item 2"
+    }
+    response = supabase.table("Person").insert(data).execute()
+    return JsonResponse(response.data, safe=False)
+
+def fetch_paginated_data(request):
+    supabase = get_supabase_client()
+
+    # Fetch query parameters for pagination
+    page = int(request.GET.get("page", 1))  # Default to page 1 if not provided
+    per_page = int(request.GET.get("per_page", 10))  # Default to 10 items per page
+
+    # Get data from Supabase
+    response = supabase.table("Person").select("*").execute()
+
+    # Full dataset from Supabase
+    data = response.data
+
+    # Use Django Paginator
+    paginator = Paginator(data, per_page)
+    try:
+        paginated_data = paginator.page(page)
+    except:
+        return JsonResponse({"error": "Invalid page number"}, status=404)
+
+    # Return paginated response
+    return JsonResponse({
+        "data": list(paginated_data),
+        "total_items": paginator.count,
+        "total_pages": paginator.num_pages,
+        "current_page": page
+    })
