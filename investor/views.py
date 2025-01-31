@@ -1,41 +1,37 @@
 from openpyxl import load_workbook
 from django.http import JsonResponse
 from django.core.paginator import Paginator
-from supabase import create_client
-from django.conf import settings
+from resources.utils import get_supabase_client
+from rest_framework.views import APIView
 
-def get_supabase_client():
-    url = settings.SUPABASE_URL
-    key = settings.SUPABASE_KEY
-    return create_client(url, key)
+class InvestorResourceList(APIView):
+    def get(self, request, *args, **kwargs):
+        supabase = get_supabase_client()
 
-def InvestorResourceList(request):
-    supabase = get_supabase_client()
+        # Fetch query parameters for pagination
+        page = int(request.GET.get("page", 1))  # Default to page 1 if not provided
+        per_page = int(request.GET.get("per_page", 10))  # Default to 10 items per page
 
-    # Fetch query parameters for pagination
-    page = int(request.GET.get("page", 1))  # Default to page 1 if not provided
-    per_page = int(request.GET.get("per_page", 10))  # Default to 10 items per page
+        # Get data from Supabase
+        response = supabase.table("Investor").select("*").execute()
 
-    # Get data from Supabase
-    response = supabase.table("Investor").select("*").execute()
+        # Full dataset from Supabase
+        data = response.data
 
-    # Full dataset from Supabase
-    data = response.data
+        # Use Django Paginator
+        paginator = Paginator(data, per_page)
+        try:
+            paginated_data = paginator.page(page)
+        except:
+            return JsonResponse({"error": "Invalid page number"}, status=404)
 
-    # Use Django Paginator
-    paginator = Paginator(data, per_page)
-    try:
-        paginated_data = paginator.page(page)
-    except:
-        return JsonResponse({"error": "Invalid page number"}, status=404)
-
-    # Return paginated response
-    return JsonResponse({
-        "data": list(paginated_data),
-        "total_items": paginator.count,
-        "total_pages": paginator.num_pages,
-        "current_page": page
-    })
+        # Return paginated response
+        return JsonResponse({
+            "data": list(paginated_data),
+            "total_items": paginator.count,
+            "total_pages": paginator.num_pages,
+            "current_page": page
+        })
 
 
 

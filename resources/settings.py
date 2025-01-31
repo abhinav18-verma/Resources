@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'startup',
     'rest_framework',
     'investor',
+    'startuptools',
 ]
 
 MIDDLEWARE = [
