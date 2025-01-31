@@ -1,33 +1,43 @@
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from .models import InvestorResource
-from .serializers import ResourceSerializer
 from openpyxl import load_workbook
-from rest_framework.pagination import LimitOffsetPagination
+from django.http import JsonResponse
+from django.core.paginator import Paginator
+from supabase import create_client
+from django.conf import settings
 
-class InvestorResourceListView(APIView):
-    def get(self, request):
-        resources = InvestorResource.objects.all()
-    
-        if resources:
-            paginator = LimitOffsetPagination()
-            paginated_list = paginator.paginate_queryset(
-                resources, request)
-            data = ResourceSerializer(
-                paginated_list, many=True).data
-        else:
-            paginator, data = None, []
-    
-        return Response(
-            {
-                "count": paginator.count,
-                "next": paginator.get_next_link(),
-                "previous": paginator.get_previous_link(),
-                "result": data,
-                "message": "Investor resources fetched successfully."
-            },
-            status=200
-        )
+def get_supabase_client():
+    url = settings.SUPABASE_URL
+    key = settings.SUPABASE_KEY
+    return create_client(url, key)
+
+def InvestorResourceList(request):
+    supabase = get_supabase_client()
+
+    # Fetch query parameters for pagination
+    page = int(request.GET.get("page", 1))  # Default to page 1 if not provided
+    per_page = int(request.GET.get("per_page", 10))  # Default to 10 items per page
+
+    # Get data from Supabase
+    response = supabase.table("Investor").select("*").execute()
+
+    # Full dataset from Supabase
+    data = response.data
+
+    # Use Django Paginator
+    paginator = Paginator(data, per_page)
+    try:
+        paginated_data = paginator.page(page)
+    except:
+        return JsonResponse({"error": "Invalid page number"}, status=404)
+
+    # Return paginated response
+    return JsonResponse({
+        "data": list(paginated_data),
+        "total_items": paginator.count,
+        "total_pages": paginator.num_pages,
+        "current_page": page
+    })
+
+
 
 def CreateInvestorResources(request):
 
@@ -47,6 +57,7 @@ def CreateInvestorResources(request):
     j = len(rows)
     articles = []
     videos = []
+    supabase = get_supabase_client()
     while j:
         if rows[i][2]:
             articles.append(rows[i][2])
@@ -61,11 +72,11 @@ def CreateInvestorResources(request):
                 videos.append(rows[i][3])
             i += 1
         print(prompt, articles, videos)
-        InvestorResource.objects.create(
-            prompt = prompt,
-            articles = articles,
-            videos = videos
-        )
+        supabase.table("Investor").insert({
+            "prompt": prompt,
+            "articles": articles,
+            "videos": videos,
+        }).execute()
         articles = []
         videos = []
         j -= 1

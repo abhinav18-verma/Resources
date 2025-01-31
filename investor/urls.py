@@ -1,7 +1,7 @@
 from django.urls import path, include
-from .views import InvestorResourceListView, CreateInvestorResources
+from .views import InvestorResourceList, CreateInvestorResources
 
 urlpatterns = [
-    path("", InvestorResourceListView.as_view(), name="StartupResoureList"),
+    path("", InvestorResourceList),
     path("create-data/", CreateInvestorResources),
 ]

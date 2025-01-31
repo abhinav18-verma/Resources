@@ -1,7 +1,7 @@
 from django.urls import path, include
-from .views import ResourceListView, CreateStartupResources
+from .views import StartupResourceList, CreateStartupResources
 
 urlpatterns = [
-    path("", ResourceListView.as_view(), name="StartupResoureList"),
+    path("", StartupResourceList, name="StartupResoureList"),
     path("create-data/", CreateStartupResources),
 ]
