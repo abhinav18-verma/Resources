@@ -22,5 +22,7 @@ urlpatterns = [
     path("startup/", include("startup.urls")),
     path("investor/", include("investor.urls")),
     path("startuptools/", include("startuptools.urls")),
+    path("investortools/", include("investortools.urls")),
     path("startupcasestudies/", include("startupcasestudies.urls")),
+    path("investorcasestudies/", include("investorcasestudies.urls")),
 ]
